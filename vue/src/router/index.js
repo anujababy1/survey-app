@@ -19,7 +19,7 @@ const router = createRouter({
             meta: {requiresAuth:true},
             children:[
                 { path:'/dashboard',name:'Dashboard',component:Dashboard },
-                { path:'/survey',name:'Survey',component:Surveys}
+                { path:'/surveys',name:'Surveys',component:Surveys}
             ],
         },
         {
