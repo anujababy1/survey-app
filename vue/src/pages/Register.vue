@@ -7,7 +7,7 @@
 
    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <form class="space-y-6" @submit="register">
-        <div v-if="error" class="error-register">{{error}}</div>
+        <div v-if="error" class="error-class">{{error}}</div>
           <div>
           <label for="fullname" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
           <div class="mt-2">
@@ -64,17 +64,28 @@
       }
     },
     methods:{
-       async register(event){
-        event.preventDefault();
-        //console.log(this.user);
-        //this.$store.dispatch('register',this.user).then(() => {this.$router.push({ name: 'Dashboard'})});
-         try {
+      //  async register(event){
+      //   event.preventDefault();
+      //   //console.log(this.user);
+      //   //this.$store.dispatch('register',this.user).then(() => {this.$router.push({ name: 'Dashboard'})});
+      //    try {
         
-          await this.$store.dispatch('register', this.user);
+      //     await this.$store.dispatch('register', this.user);
+      //     this.$router.push({ name: 'Dashboard'});
+      // } catch (err) {
+      //   this.error = err.message || 'Failed to authenticate, try later.';
+      // }
+      // }
+      async register(event){
+        event.preventDefault();
+        this.error = null;
+        try{
+          await this.$store.dispatch('register',this.user);
           this.$router.push({ name: 'Dashboard'});
-      } catch (err) {
-        this.error = err.message || 'Failed to authenticate, try later.';
-      }
+        }catch (err) {
+            this.error = err.response.data.message || 'Failed to authenticate, try later.';
+        }
+        
       }
     }
   }
@@ -83,7 +94,7 @@
 
 
 <style scoped>
-  .error-register{
+  .error-class{
     color:red;
   }
 </style>
