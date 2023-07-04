@@ -288,8 +288,8 @@ import { v4 as uuidv4 } from "uuid";
             addQuestion(){
                 this.$emit("addQuestion", this.props.index + 1);
             },
-            deleteQuestion(){
-                this.$emit("deleteQuestion", props.question);
+            deleteQuestion(){ 
+                this.$emit("deleteQuestion", this.question);
             },
             shouldHaveOptions() {
                 return ["select", "radio", "checkbox"].includes(this.data.type);

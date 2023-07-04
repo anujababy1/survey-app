@@ -266,6 +266,7 @@
     </PageComponent>
 </template>
 <script>
+import { v4 as uuidv4 } from "uuid";
 import PageComponent from '../components/PageComponent.vue';
 import QuestionEditor from '../components/question/QuestionEditor.vue';
     export default{
@@ -295,13 +296,26 @@ import QuestionEditor from '../components/question/QuestionEditor.vue';
         },
         methods:{
             addQuestion(){
+                const newQuestion = {
+                    id: uuidv4(),
+                    type: "text",
+                    question: "",
+                    description: null,
+                    data: {},
+                };
 
+                this.model.questions.splice(index, 0, newQuestion);
             },
-            questionChange(){
-
+            questionChange(question){
+                this.model.questions = this.model.questions.map((q) => {
+                    if (q.id === question.id) {
+                    return JSON.parse(JSON.stringify(question));
+                    }
+                    return q;
+                });
             },
-            deleteQuestion(){
-                
+            deleteQuestion(question){
+                this.model.questions = this.model.questions.filter((q) => q.id !== question.id);
             }
         }
     }
