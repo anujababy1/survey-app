@@ -9,4 +9,7 @@
 
 <script>
  import PageComponent from '../components/PageComponent.vue'
+  components:{
+    PageComponent
+  }
 </script>
