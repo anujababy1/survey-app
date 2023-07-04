@@ -21,6 +21,7 @@ const store = createStore({
         logout(state){
             state.user.data ={};
             state.user.token =null;
+            sessionStorage.clear();
         },
         setUser(state,obj){
             state.user.data = obj.user;
@@ -73,6 +74,10 @@ const store = createStore({
         async login(context,user){ 
             const response = await axiosClient.post('/login', user);
             context.commit('setUser', response.data);
+        },
+        async logout(context){ 
+            const response = await axiosClient.post('/logout');
+            context.commit('logout');
         }
     },
     

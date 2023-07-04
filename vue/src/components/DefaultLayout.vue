@@ -88,8 +88,12 @@ const navigation = [
   { name: 'Surveys', to: {name:'Surveys'}}
 ]
 
- function logout(){
-    store.commit('logout');
-    router.push({name:'Login'});
+ async function logout(){
+    try{
+      await store.dispatch('logout');
+      router.push({name:'Login'});
+    }catch (err) {
+      
+    }
  }
 </script>
