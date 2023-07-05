@@ -7,7 +7,8 @@
                 </h1>
             </div>
         </template>
-         <form action="#" method="POST">
+        <div v-if="model.loading">Loading ............</div>
+         <form action="#" method="POST" @submit="saveSurvey" v-else>
             <div class="shadow sm:rounded-md sm:overflow-hidden">
               <!-- Survey Fields -->
               <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
@@ -18,8 +19,8 @@
                   </label>
                   <div class="mt-1 flex items-center">
                      <img
-                v-if="model.image"
-                :src="model.image"
+                v-if="model.image_url"
+                :src="model.image_url"
                 :alt="model.title"
                 class="w-64 h-48 object-cover"
               />
@@ -65,16 +66,9 @@
                     >
                       <input
                         type="file"
-                        class="
-                          absolute
-                          left-0
-                          top-0
-                          right-0
-                          bottom-0
-                          opacity-0
-                          cursor-pointer
-                        "
-                      />
+                        @change="onImageChange"
+                        class="absolute left-0 top-0 right-0 bottom-0 opacity-0 cursor-pointer"
+                        />
                       Change
                     </button>
                   </div>
@@ -269,6 +263,7 @@
 import { v4 as uuidv4 } from "uuid";
 import PageComponent from '../components/PageComponent.vue';
 import QuestionEditor from '../components/question/QuestionEditor.vue';
+import { mapState } from 'vuex';
     export default{
         components:{
             PageComponent,QuestionEditor
@@ -276,25 +271,35 @@ import QuestionEditor from '../components/question/QuestionEditor.vue';
         data(){
             return {
                 model:{
+                    id: null,
                     title:'',
                     status:false,
                     description:null,
                     image:null,
                     expire_date:null,
                     questions:[],
-                }
+                    image_url:null,
+                    loading:false
+                },
+                error:null
                 
             }
+
         },
         mounted(){
 
             if(this.$route.params.id){
-                this.model = this.$store.state.surveys.find((el,index)=>{
-                    return el.id === +this.$route.params.id;
-                })
+                this.getSurvey();
             }
         },
+        computed: mapState(['currentSurvey']),
         methods:{
+            async getSurvey(){
+                this.model.loading  = true;
+                await this.$store.dispatch('getSurvey',+this.$route.params.id);
+                this.model = {...this.model,...this.currentSurvey.data};
+                this.model.loading =  this.currentSurvey.loadig;
+            },
             addQuestion(){
                 const newQuestion = {
                     id: uuidv4(),
@@ -314,10 +319,34 @@ import QuestionEditor from '../components/question/QuestionEditor.vue';
                     return q;
                 });
             },
+            onImageChange(ev){ 
+                const file = ev.target.files[0];
+
+                const reader = new FileReader();
+                reader.onload = () => {
+                    // The field to send on backend and apply validations
+                    this.model.image = reader.result;
+
+                    // The field to display here
+                    this.model.image_url = reader.result;
+                    ev.target.value = "";
+                };
+                reader.readAsDataURL(file);
+            },
             deleteQuestion(question){
                 this.model.questions = this.model.questions.filter((q) => q.id !== question.id);
+            },
+             async saveSurvey(event){
+                event.preventDefault();
+                try{ 
+                    let data = await this.$store.dispatch('saveSurvey',this.model);
+                    this.$router.push({ name: 'SurveyView',params:{id:data.data.data.id}});
+                    this.getSurvey();
+                }catch (err) {
+                    this.error = 'Something went wrong';
+                }
             }
-        }
+        },
     }
 </script>
 <style scoped>

@@ -20,5 +20,7 @@ Route::post('/login', [AuthController::class,'login']);
 
 Route::group(['middleware'=>['auth:sanctum']], function(){
     Route::post('/logout', [AuthController::class,'logout']);
+    Route::resource('/survey', \App\Http\Controllers\SurveyController::class);
+
 });
 
