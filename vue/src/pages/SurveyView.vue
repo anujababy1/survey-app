@@ -5,6 +5,9 @@
                 <h1 class="text-3xl font-bold text-gray-900">
                 {{ this.$route.params.id ? model.title : "Create a Survey" }}
                 </h1>
+                <button @click="deleteSurvey" v-if="this.$route.params.id" type="button" class="py-2 px-3 text-white bg-red-500 rounded-md hover:bg-red-600">
+                  Delete Survey
+                </button>
             </div>
         </template>
         <div v-if="model.loading">Loading ............</div>
@@ -294,13 +297,14 @@ import { mapState } from 'vuex';
         },
         computed: mapState(['currentSurvey']),
         methods:{
-            async getSurvey(){
+            async getSurvey(id=null){
+              let survey_id = id??+this.$route.params.id;
                 this.model.loading  = true;
-                await this.$store.dispatch('getSurvey',+this.$route.params.id);
+                await this.$store.dispatch('getSurvey',survey_id);
                 this.model = {...this.model,...this.currentSurvey.data};
-                this.model.loading =  this.currentSurvey.loadig;
+                this.model.loading =  this.currentSurvey.loading;
             },
-            addQuestion(){
+            addQuestion(index){
                 const newQuestion = {
                     id: uuidv4(),
                     type: "text",
@@ -340,11 +344,24 @@ import { mapState } from 'vuex';
                 event.preventDefault();
                 try{ 
                     let data = await this.$store.dispatch('saveSurvey',this.model);
+                    console.log(data);
+                    this.getSurvey(data.data.data.id);
                     this.$router.push({ name: 'SurveyView',params:{id:data.data.data.id}});
-                    this.getSurvey();
+                    
                 }catch (err) {
+                  console.log(err);
                     this.error = 'Something went wrong';
                 }
+            },
+            async deleteSurvey(){
+              if (confirm(`Are you sure you want to delete this survey? Operation can't be undone!!`)){
+                  try{ 
+                    let data = await this.$store.dispatch('deleteSurvey',this.model.id);
+                    this.$router.push({ name: 'Surveys'});
+                  }catch (err) {
+                      this.error = 'Something went wrong';
+                  }
+              }
             }
         },
     }

@@ -8,7 +8,7 @@
       <!-- Add new question -->
       <button
         type="button"
-        @click="addQuestion()"
+        @click="addNewQuestion()"
         class="
           flex
           items-center
@@ -285,8 +285,8 @@ import { v4 as uuidv4 } from "uuid";
             }
         },
         methods:{
-            addQuestion(){
-                this.$emit("addQuestion", this.props.index + 1);
+            addNewQuestion(){
+                this.$emit("addQuestion", this.index + 1);
             },
             deleteQuestion(){ 
                 this.$emit("deleteQuestion", this.question);
@@ -307,7 +307,7 @@ import { v4 as uuidv4 } from "uuid";
             
             addOption() {
                 this.data.data.options = [...this.data.data.options, { uuid: uuidv4(), text: "" }];
-                dataChange();
+                this.dataChange();
             },
 
             // Remove option
@@ -316,7 +316,7 @@ import { v4 as uuidv4 } from "uuid";
                     return option.uuid !== op.uuid;
                 });
                 this.data.data.options = data;
-                dataChange();
+                this.dataChange();
             }
         }
         
