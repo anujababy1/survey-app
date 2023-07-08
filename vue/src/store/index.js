@@ -62,10 +62,9 @@ const store = createStore({
           state.surveys.loading = value;
         },
         getSurveys(state,surveys){
-         
           state.surveys.data = surveys.data;
           state.surveys.links = surveys.meta.links;
-        }
+        },
     },
     actions: { 
         // async register(context,user){
@@ -155,6 +154,24 @@ const store = createStore({
         
           }
           context.commit('setSurveysLoading',false);
+        },
+        async getSurveyBySlug(context,slug){
+
+          context.commit('setCurrentSurveyLoading',true);
+          try{
+            const response = await axiosClient.get(`/survey-by-slug/${slug}`);
+            context.commit('setCurrentSurvey', response.data);
+            return response;
+          }catch (err) {
+        
+          }
+          context.commit('setCurrentSurveyLoading',false);
+
+        },
+        async saveSurveyAnswer(context,{surveyId,answers}){
+          console.log(answers);
+          const response = await axiosClient.post(`/survey/${surveyId}/answer`,{answers});
+          return response;
         }
     },
     

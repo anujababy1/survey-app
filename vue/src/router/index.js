@@ -7,12 +7,17 @@ import Login from '../pages/Login.vue';
 import Dashboard from '../pages/Dashboard.vue';
 import SurveyView from "../pages/SurveyView.vue";
 import Surveys from '../pages/Surveys.vue';
+import SurveyPublicView from '../pages/SurveyPublicView.vue';
 import store from "../store";
 
 const router = createRouter({
     history:createWebHistory(),
     routes:[
-        
+        {
+            path:'/view/survey/:slug',
+            name:'SurveyPublicView',
+            component:SurveyPublicView
+        },
         {
             path:'/',
             redirect:'/dashboard',
